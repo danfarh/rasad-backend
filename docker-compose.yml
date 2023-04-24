@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: postgres
+    image: 'postgres:latest'
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    networks:
+      - main
+    ports:
+      - '5000:5432'
+    restart: on-failure
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - static_file:/app/static
+      - media_file:/app/media
+    environment:
+      - DATABASES_ENGINE=django.db.backends.postgresql
+      - DATABASES_NAME=postgres
+      - DATABASES_USER=postgres
+      - DATABASES_PASSWORD=postgres
+      - DATABASES_HOST=postgres
+      - DATABASES_PORT=5432
+    networks:
+      - main
+    restart: always
+    ports:
+      - "8000:8000"
+    container_name: app
+    command: sh -c 'python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000'
+    depends_on:
+      - postgres
+    links:
+      - postgres
+
+
+networks:
+  main:
+    external: true
+
+volumes:
+  postgres_data:
+    external: true
+
+  static_file:
+    external: true
+
+  media_file:
+    external: true

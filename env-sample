@@ -1,0 +1,7 @@
+#database
+DATABASES_ENGINE=django.db.backends.postgresql
+DATABASES_NAME=rasad_db
+DATABASES_USER=postgres
+DATABASES_PASSWORD=postgres
+DATABASES_HOST=localhost
+DATABASES_PORT=5432
